@@ -34,6 +34,7 @@ function displayBooks() {
     const bookPages = document.createElement("p");
     const bookStatus = document.createElement("p");
     const removeBtn = document.createElement("button");
+    const toggleBtn = document.createElement("button");
     const card = document.createElement("div");
     card.dataset.id = books.id;
     bookTitle.textContent = books.title;
@@ -41,7 +42,8 @@ function displayBooks() {
     bookPages.textContent = books.pages + " pages";
     bookStatus.textContent = books.read ? "read" : "not read";
     removeBtn.textContent = "remove";
-    removeBtn.dataset.id = card.dataset.id;
+    //removeBtn.dataset.id = card.dataset.id;
+    toggleBtn.textContent = "toggle read status";
 
     removeBtn.addEventListener("click", (e) => {
       /*myLibrary.forEach((element) => {
@@ -51,10 +53,20 @@ function displayBooks() {
         }
       });
       */
-      const toDelete = (element) => element.id === e.currentTarget.dataset.id;
+      const toDelete = (element) =>
+        element.id === e.target.closest("[data-id]").dataset.id;
 
       const index = myLibrary.findIndex(toDelete);
       myLibrary.splice(index, 1);
+      displayBooks();
+    });
+
+    toggleBtn.addEventListener("click", (e) => {
+      const toToggle = (element) =>
+        element.id === e.target.closest("[data-id]").dataset.id;
+
+      const index = myLibrary.findIndex(toToggle);
+      myLibrary[index].toggleRead();
       displayBooks();
     });
 
@@ -63,6 +75,7 @@ function displayBooks() {
     card.appendChild(bookPages);
     card.appendChild(bookStatus);
     card.appendChild(removeBtn);
+    card.appendChild(toggleBtn);
     bookdisplay.appendChild(card);
   }
 }
@@ -85,3 +98,8 @@ form.addEventListener("submit", (event) => {
   displayBooks();
   bookDialog.close();
 });
+
+Book.prototype.toggleRead = function () {
+  //this.read ? (this.read = false) : (this.read = true);
+  this.read = !this.read;
+};
