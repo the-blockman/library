@@ -5,12 +5,19 @@ const form = document.getElementById("form");
 
 const myLibrary = [];
 
-function Book(title, author, pages, read) {
-  this.title = title;
-  this.id = crypto.randomUUID();
-  this.author = author;
-  this.pages = pages;
-  this.read = read;
+class Book {
+  constructor(title, author, pages, read) {
+    this.title = title;
+    this.id = crypto.randomUUID();
+    this.author = author;
+    this.pages = pages;
+    this.read = read;
+  }
+
+  toggleRead() {
+    //this.read ? (this.read = false) : (this.read = true);
+    this.read = !this.read;
+  }
 }
 
 function addBookToLibrary(title, author, pages, read) {
@@ -24,11 +31,9 @@ addBookToLibrary("Miracle Cure", "Michael Palmer", 424, true);
 console.log(myLibrary);
 
 function displayBooks() {
-  let books;
   bookdisplay.innerHTML = "";
 
-  for (let i = 0; i < myLibrary.length; i++) {
-    books = myLibrary[i];
+  myLibrary.forEach((book) => {
     const bookTitle = document.createElement("h3");
     const bookAuthor = document.createElement("p");
     const bookPages = document.createElement("p");
@@ -36,26 +41,18 @@ function displayBooks() {
     const removeBtn = document.createElement("button");
     const toggleBtn = document.createElement("button");
     const card = document.createElement("div");
-    card.dataset.id = books.id;
-    bookTitle.textContent = books.title;
-    bookAuthor.textContent = books.author;
-    bookPages.textContent = books.pages + " pages";
-    bookStatus.textContent = books.read ? "read" : "not read";
+
+    card.dataset.id = book.id;
+    bookTitle.textContent = book.title;
+    bookAuthor.textContent = book.author;
+    bookPages.textContent = book.pages + " pages";
+    bookStatus.textContent = book.read ? "read" : "not read";
     removeBtn.textContent = "remove";
-    //removeBtn.dataset.id = card.dataset.id;
     toggleBtn.textContent = "toggle read status";
 
     removeBtn.addEventListener("click", (e) => {
-      /*myLibrary.forEach((element) => {
-        if (element.id == e.currentTarget.dataset.id) {
-          const index = myLibrary.indexOf(element);
-          myLibrary.splice(index, 1);
-        }
-      });
-      */
       const toDelete = (element) =>
         element.id === e.target.closest("[data-id]").dataset.id;
-
       const index = myLibrary.findIndex(toDelete);
       myLibrary.splice(index, 1);
       displayBooks();
@@ -64,7 +61,6 @@ function displayBooks() {
     toggleBtn.addEventListener("click", (e) => {
       const toToggle = (element) =>
         element.id === e.target.closest("[data-id]").dataset.id;
-
       const index = myLibrary.findIndex(toToggle);
       myLibrary[index].toggleRead();
       displayBooks();
@@ -77,7 +73,7 @@ function displayBooks() {
     card.appendChild(removeBtn);
     card.appendChild(toggleBtn);
     bookdisplay.appendChild(card);
-  }
+  });
 }
 
 displayBooks();
@@ -98,8 +94,3 @@ form.addEventListener("submit", (event) => {
   displayBooks();
   bookDialog.close();
 });
-
-Book.prototype.toggleRead = function () {
-  //this.read ? (this.read = false) : (this.read = true);
-  this.read = !this.read;
-};
